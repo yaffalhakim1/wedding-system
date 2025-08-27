@@ -1,5 +1,4 @@
-'use strict';
-
+import { Request, Response, NextFunction } from 'express';
 import db from '../models/index.js';
 import ApiError from '../utils/apiError.js';
 import ResponseHandler from '../utils/responseHandler.js';
@@ -8,7 +7,11 @@ import { ERROR_CODES, HTTP_STATUS } from '../config/errors.js';
 const { Wedding } = db;
 
 // GET /api/wedding - Get wedding details
-export const getWedding = async (req, res, next) => {
+export const getWedding = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<Response> => {
   try {
     const wedding = await Wedding.findOne();
     

@@ -1,6 +1,4 @@
-'use strict';
-
-const ERROR_CODES = {
+export const ERROR_CODES = {
   // General errors
   INTERNAL_SERVER_ERROR: 'INTERNAL_SERVER_ERROR',
   NOT_FOUND: 'NOT_FOUND',
@@ -24,9 +22,11 @@ const ERROR_CODES = {
   PHOTO_UPLOAD_FAILED: 'PHOTO_UPLOAD_FAILED',
   INVALID_FILE_TYPE: 'INVALID_FILE_TYPE',
   FILE_TOO_LARGE: 'FILE_TOO_LARGE',
-};
+} as const;
 
-const ERROR_MESSAGES = {
+export type ErrorCode = typeof ERROR_CODES[keyof typeof ERROR_CODES];
+
+export const ERROR_MESSAGES: Record<ErrorCode, string> = {
   [ERROR_CODES.INTERNAL_SERVER_ERROR]: 'Internal server error',
   [ERROR_CODES.NOT_FOUND]: 'Resource not found',
   [ERROR_CODES.BAD_REQUEST]: 'Bad request',
@@ -47,7 +47,7 @@ const ERROR_MESSAGES = {
   [ERROR_CODES.FILE_TOO_LARGE]: 'File size too large',
 };
 
-const HTTP_STATUS = {
+export const HTTP_STATUS = {
   OK: 200,
   CREATED: 201,
   BAD_REQUEST: 400,
@@ -56,10 +56,6 @@ const HTTP_STATUS = {
   NOT_FOUND: 404,
   CONFLICT: 409,
   INTERNAL_SERVER_ERROR: 500,
-};
+} as const;
 
-export {
-  ERROR_CODES,
-  ERROR_MESSAGES,
-  HTTP_STATUS,
-};
+export type HttpStatus = typeof HTTP_STATUS[keyof typeof HTTP_STATUS];

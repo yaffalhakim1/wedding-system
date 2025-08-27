@@ -1,5 +1,4 @@
-'use strict';
-
+import { Request, Response } from 'express';
 import db from '../models/index.js';
 import ApiError from '../utils/apiError.js';
 import ResponseHandler from '../utils/responseHandler.js';
@@ -9,11 +8,32 @@ import path from 'path';
 
 const { Photo, Wedding } = db;
 
+interface UploadPhotoRequest {
+  weddingId: string;
+  uploaded_by?: string;
+  caption?: string;
+}
+
+interface RequestWithFile extends Request<{}, any, UploadPhotoRequest> {
+  file?: Express.Multer.File;
+}
+
 // POST /api/photos - Upload photos with captions
-export const uploadPhoto = async (req, res) => {
+export const uploadPhoto = async (
+  req: RequestWithFile,
+  res: Response
+): Promise<Response> => {
   try {
     const { weddingId, uploaded_by, caption } = req.body;
     const file = req.file;
+
+    if (!file) {
+      throw new ApiError(
+        ERROR_CODES.BAD_REQUEST,
+        HTTP_STATUS.BAD_REQUEST,
+        'No file uploaded'
+      );
+    }
 
     // Check if wedding exists
     const wedding = await Wedding.findByPk(weddingId);
@@ -86,7 +106,10 @@ export const uploadPhoto = async (req, res) => {
 };
 
 // GET /api/photos - Get approved photos for gallery
-export const getApprovedPhotos = async (req, res) => {
+export const getApprovedPhotos = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
   try {
     const photos = await Photo.findAll({
       where: { is_approved: true },

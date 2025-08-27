@@ -1,9 +1,8 @@
-'use strict';
-
-import multer from 'multer';
+import multer, { MulterError } from 'multer';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import { Request, Response, NextFunction } from 'express';
 import ApiError from '../utils/apiError.js';
 import { ERROR_CODES, HTTP_STATUS } from '../config/errors.js';
 
@@ -25,7 +24,11 @@ const storage = multer.diskStorage({
 });
 
 // File filter function
-const fileFilter = (req, file, cb) => {
+const fileFilter = (
+  req: Request,
+  file: Express.Multer.File,
+  cb: multer.FileFilterCallback
+) => {
   const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 
   if (allowedTypes.includes(file.mimetype)) {
@@ -36,7 +39,7 @@ const fileFilter = (req, file, cb) => {
         ERROR_CODES.INVALID_FILE_TYPE,
         HTTP_STATUS.BAD_REQUEST,
         'Only JPEG, PNG, and WebP images are allowed'
-      ),
+      ) as any,
       false
     );
   }
@@ -47,7 +50,7 @@ const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
   limits: {
-    fileSize: parseInt(process.env.MAX_FILE_SIZE) || 5 * 1024 * 1024, // 5MB default
+    fileSize: parseInt(process.env.MAX_FILE_SIZE || '5242880') || 5 * 1024 * 1024, // 5MB default
     files: 1, // Only allow one file at a time
   },
 });
@@ -56,8 +59,13 @@ const upload = multer({
 export const uploadPhoto = upload.single('photo');
 
 // Error handling middleware for multer
-export const handleUploadError = (error, req, res, next) => {
-  if (error instanceof multer.MulterError) {
+export const handleUploadError = (
+  error: any,
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Response | void => {
+  if (error instanceof MulterError) {
     if (error.code === 'LIMIT_FILE_SIZE') {
       return res.status(HTTP_STATUS.BAD_REQUEST).json({
         success: false,

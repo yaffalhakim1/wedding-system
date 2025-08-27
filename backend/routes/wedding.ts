@@ -1,9 +1,7 @@
-'use strict';
-
-import express from 'express';
+import express, { Router } from 'express';
 import { getWedding } from '../controllers/weddingController.js';
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // GET /api/wedding - Get wedding information and details
 router.get('/', getWedding);

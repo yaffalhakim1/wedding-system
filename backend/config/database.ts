@@ -1,13 +1,45 @@
 import dotenv from 'dotenv';
+import { Options } from 'sequelize';
+
 dotenv.config();
 
-export default {
+interface DatabasePoolOptions {
+  max: number;
+  min: number;
+  acquire: number;
+  idle: number;
+}
+
+interface DatabaseConfig extends Options {
+  username: string;
+  password: string;
+  database: string;
+  host: string;
+  port: number;
+  dialect: 'postgres';
+  logging: boolean | ((sql: string, timing?: number) => void);
+  pool: DatabasePoolOptions;
+  dialectOptions?: {
+    ssl?: {
+      require: boolean;
+      rejectUnauthorized: boolean;
+    } | false;
+  };
+}
+
+interface DatabaseConfigs {
+  development: DatabaseConfig;
+  test: DatabaseConfig;
+  production: DatabaseConfig;
+}
+
+const config: DatabaseConfigs = {
   development: {
     username: process.env.DB_USERNAME || 'postgres',
     password: process.env.DB_PASSWORD || 'password',
     database: process.env.DB_NAME || 'wedding_db',
     host: process.env.DB_HOST || 'localhost',
-    port: process.env.DB_PORT || 5432,
+    port: parseInt(process.env.DB_PORT || '5432', 10),
     dialect: 'postgres',
     logging: console.log,
     pool: {
@@ -22,7 +54,7 @@ export default {
     password: process.env.DB_PASSWORD || 'password',
     database: process.env.DB_NAME || 'wedding_invitation_test',
     host: process.env.DB_HOST || 'localhost',
-    port: process.env.DB_PORT || 5432,
+    port: parseInt(process.env.DB_PORT || '5432', 10),
     dialect: 'postgres',
     logging: false,
     pool: {
@@ -33,11 +65,11 @@ export default {
     },
   },
   production: {
-    username: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
+    username: process.env.DB_USERNAME!,
+    password: process.env.DB_PASSWORD!,
+    database: process.env.DB_NAME!,
+    host: process.env.DB_HOST!,
+    port: parseInt(process.env.DB_PORT!, 10),
     dialect: 'postgres',
     logging: false,
     pool: {
@@ -57,3 +89,5 @@ export default {
     },
   },
 };
+
+export default config;

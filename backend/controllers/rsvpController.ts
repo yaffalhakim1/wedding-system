@@ -1,5 +1,4 @@
-'use strict';
-
+import { Request, Response } from 'express';
 import db from '../models/index.js';
 import ApiError from '../utils/apiError.js';
 import ResponseHandler from '../utils/responseHandler.js';
@@ -7,8 +6,22 @@ import { ERROR_CODES, HTTP_STATUS } from '../config/errors.js';
 
 const { Rsvp, Wedding } = db;
 
+interface CreateRsvpRequest {
+  weddingId: string;
+  guest_name: string;
+  guest_email?: string;
+  guest_phone?: string;
+  attendance_status: 'attending' | 'not_attending' | 'maybe';
+  number_of_guests: number;
+  dietary_restrictions?: string;
+  special_requests?: string;
+}
+
 // POST /api/rsvp - Submit guest RSVP response (validation applied via middleware)
-export const createRsvp = async (req, res) => {
+export const createRsvp = async (
+  req: Request<{}, any, CreateRsvpRequest>,
+  res: Response
+): Promise<Response> => {
   try {
     const {
       weddingId,
@@ -79,7 +92,10 @@ export const createRsvp = async (req, res) => {
 };
 
 // GET /api/admin/rsvps - Get all RSVP responses (admin only)
-export const getAllRsvps = async (req, res) => {
+export const getAllRsvps = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
   try {
     const rsvps = await Rsvp.findAll({
       include: [

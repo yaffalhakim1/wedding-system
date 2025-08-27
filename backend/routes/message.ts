@@ -1,13 +1,11 @@
-'use strict';
-
-import express from 'express';
+import express, { Router } from 'express';
 import {
   createMessage,
   getApprovedMessages,
 } from '../controllers/messageController.js';
 import { validateMessage } from '../middleware/validation.js';
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // POST /api/messages - Submit guest message/congratulations
 router.post('/', validateMessage, createMessage);

@@ -1,10 +1,48 @@
 'use strict';
 
-import { Model } from 'sequelize';
+import { Model, DataTypes as SequelizeDataTypes, Sequelize, Association } from 'sequelize';
 
-export default (sequelize, DataTypes) => {
-  class Wedding extends Model {
-    static associate(models) {
+interface WeddingAttributes {
+  id?: string;
+  bride_name: string;
+  groom_name: string;
+  wedding_date: string;
+  wedding_time?: string;
+  venue_name: string;
+  venue_address: string;
+  ceremony_time?: string;
+  ceremony_location?: string;
+  reception_time?: string;
+  reception_location?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+interface WeddingCreationAttributes extends Omit<WeddingAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
+
+export default (sequelize: Sequelize, DataTypes: typeof SequelizeDataTypes) => {
+  class Wedding extends Model<WeddingAttributes, WeddingCreationAttributes> implements WeddingAttributes {
+    public id!: string;
+    public bride_name!: string;
+    public groom_name!: string;
+    public wedding_date!: string;
+    public wedding_time?: string;
+    public venue_name!: string;
+    public venue_address!: string;
+    public ceremony_time?: string;
+    public ceremony_location?: string;
+    public reception_time?: string;
+    public reception_location?: string;
+    public readonly createdAt!: Date;
+    public readonly updatedAt!: Date;
+
+    public static associations: {
+      rsvps: Association<Wedding, any>;
+      messages: Association<Wedding, any>;
+      photos: Association<Wedding, any>;
+    };
+
+    static associate(models: any) {
       // wedding can have many rspvs, messages, photos
       Wedding.hasMany(models.Rsvp, {
         foreignKey: 'weddingId',

@@ -1,6 +1,5 @@
-'use strict';
-
 import Joi from 'joi';
+import { Request, Response, NextFunction } from 'express';
 import ResponseHandler from '../utils/responseHandler.js';
 import { ERROR_CODES, HTTP_STATUS } from '../config/errors.js';
 
@@ -47,7 +46,11 @@ const rsvpSchema = Joi.object({
 });
 
 // Validation middleware function
-export const validateRsvp = (req, res, next) => {
+export const validateRsvp = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Response | void => {
   const { error } = rsvpSchema.validate(req.body, {
     abortEarly: false, // Get all validation errors
     stripUnknown: true, // Remove unknown fields
@@ -94,7 +97,11 @@ const messageSchema = Joi.object({
   }),
 });
 
-export const validateMessage = (req, res, next) => {
+export const validateMessage = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Response | void => {
   const { error } = messageSchema.validate(req.body, {
     abortEarly: false,
     stripUnknown: true,
@@ -131,7 +138,11 @@ const photoSchema = Joi.object({
   }),
 });
 
-export const validatePhoto = (req, res, next) => {
+export const validatePhoto = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Response | void => {
   const { error } = photoSchema.validate(req.body, {
     abortEarly: false,
     stripUnknown: true,
@@ -153,7 +164,7 @@ export const validatePhoto = (req, res, next) => {
   }
 
   // Check if file was uploaded
-  if (!req.file) {
+  if (!(req as Request & { file?: Express.Multer.File }).file) {
     return ResponseHandler.error(
       res,
       ERROR_CODES.BAD_REQUEST,

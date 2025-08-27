@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
@@ -57,7 +57,7 @@ app.use(express.urlencoded({ extended: true, limit: '20mb' }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Health check endpoint
-app.get('/health', (req, res) => {
+app.get('/health', (req: Request, res: Response) => {
   res.status(200).json({
     status: 'OK',
     message: 'Wedding Invitation Backend is running',
@@ -67,7 +67,7 @@ app.get('/health', (req, res) => {
 });
 
 // API Routes (to be implemented)
-app.get('/api', (req, res) => {
+app.get('/api', (req: Request, res: Response) => {
   res.json({
     message: 'Wedding Invitation API',
     version: '1.0.0',
@@ -89,7 +89,7 @@ app.use('/api/messages', messageRoutes);
 app.use('/api/admin', adminRoutes);
 
 // 404 handler
-app.use('*', (req, res) => {
+app.use('*', (req: Request, res: Response) => {
   res.status(404).json({
     error: 'Route not found',
     path: req.originalUrl,
@@ -97,7 +97,7 @@ app.use('*', (req, res) => {
 });
 
 // Global error handler
-app.use((err, req, res, next) => {
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   console.error(err.stack);
 
   const statusCode = err.statusCode || 500;

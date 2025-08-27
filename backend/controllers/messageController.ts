@@ -1,5 +1,4 @@
-'use strict';
-
+import { Request, Response } from 'express';
 import db from '../models/index.js';
 import ApiError from '../utils/apiError.js';
 import ResponseHandler from '../utils/responseHandler.js';
@@ -7,8 +6,18 @@ import { ERROR_CODES, HTTP_STATUS } from '../config/errors.js';
 
 const { Message, Wedding } = db;
 
+interface CreateMessageRequest {
+  weddingId: string;
+  sender_name: string;
+  sender_email?: string;
+  message_content: string;
+}
+
 // POST /api/messages - Submit guest message/congratulations
-export const createMessage = async (req, res) => {
+export const createMessage = async (
+  req: Request<{}, any, CreateMessageRequest>,
+  res: Response
+): Promise<Response> => {
   try {
     const { weddingId, sender_name, sender_email, message_content } = req.body;
 
@@ -53,7 +62,10 @@ export const createMessage = async (req, res) => {
 };
 
 // GET /api/messages - Get approved messages for display
-export const getApprovedMessages = async (req, res) => {
+export const getApprovedMessages = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
   try {
     const messages = await Message.findAll({
       where: { is_approved: true },
