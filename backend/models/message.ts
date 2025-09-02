@@ -13,6 +13,7 @@ export interface MessageAttributes {
   approved_at?: Date | null;
   createdAt?: Date;
   updatedAt?: Date;
+  deletedAt?: Date;
 }
 
 // Interface for Message creation attributes (optional id, timestamps, and approval fields)
@@ -101,6 +102,7 @@ export default (sequelize: Sequelize, DataTypes: typeof import('sequelize').Data
       tableName: 'messages',
       underscored: true,
       timestamps: true,
+      paranoid: true,
       indexes: [
         {
           fields: ['weddingId'],

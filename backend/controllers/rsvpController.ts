@@ -3,8 +3,9 @@ import db from '../models/index.js';
 import ApiError from '../utils/apiError.js';
 import ResponseHandler from '../utils/responseHandler.js';
 import { ERROR_CODES, HTTP_STATUS } from '../config/errors.js';
+import { logModelOperation } from '../utils/logger.js';
 
-const { Rsvp, Wedding } = db;
+const { Rsvp, Wedding, AuditLog } = db;
 
 interface CreateRsvpRequest {
   weddingId: string;
@@ -63,6 +64,26 @@ export const createRsvp = async (
       number_of_guests,
       dietary_restrictions: dietary_restrictions || null,
       special_requests: special_requests || null,
+    });
+
+    // Log the operation
+    logModelOperation(req, 'CREATE', 'rsvp', rsvp.id, null, rsvp.toJSON());
+
+    // Create audit trail entry
+    await AuditLog.createAuditEntry({
+      table_name: 'rsvps',
+      record_id: rsvp.id,
+      action: 'CREATE',
+      old_values: null,
+      new_values: rsvp.toJSON(),
+      user_type: 'guest',
+      ip_address: req.ip,
+      user_agent: req.get('User-Agent'),
+      metadata: {
+        operation: 'guest_rsvp_submission',
+        guest_email: guest_email,
+        attendance_status
+      }
     });
 
     return ResponseHandler.success(

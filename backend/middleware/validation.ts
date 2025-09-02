@@ -175,3 +175,165 @@ export const validatePhoto = (
 
   next();
 };
+
+// Admin login validation schema
+const adminLoginSchema = Joi.object({
+  password: Joi.string().required().messages({
+    'any.required': 'Password is required',
+    'string.empty': 'Password is required',
+  }),
+});
+
+// Admin login validation middleware
+export const validateAdminLogin = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Response | void => {
+  const { error } = adminLoginSchema.validate(req.body, {
+    abortEarly: false,
+    stripUnknown: true,
+  });
+
+  if (error) {
+    const errors = error.details.map((detail) => ({
+      field: detail.path.join('.'),
+      message: detail.message,
+    }));
+
+    return ResponseHandler.error(
+      res,
+      ERROR_CODES.BAD_REQUEST,
+      HTTP_STATUS.BAD_REQUEST,
+      'Validation failed',
+      errors
+    );
+  }
+
+  next();
+};
+
+// Wedding update validation schema
+const weddingUpdateSchema = Joi.object({
+  bride_name: Joi.string().trim().min(1).max(100).optional().messages({
+    'string.min': 'Bride name must be at least 1 character',
+    'string.max': 'Bride name cannot exceed 100 characters',
+  }),
+  groom_name: Joi.string().trim().min(1).max(100).optional().messages({
+    'string.min': 'Groom name must be at least 1 character',
+    'string.max': 'Groom name cannot exceed 100 characters',
+  }),
+  wedding_date: Joi.date().optional().messages({
+    'date.base': 'Wedding date must be a valid date',
+  }),
+  wedding_time: Joi.string().optional().messages({
+    'string.base': 'Wedding time must be a string',
+  }),
+  venue_name: Joi.string().trim().max(200).optional().messages({
+    'string.max': 'Venue name cannot exceed 200 characters',
+  }),
+  venue_address: Joi.string().trim().optional().messages({
+    'string.base': 'Venue address must be a string',
+  }),
+  ceremony_time: Joi.string().optional().messages({
+    'string.base': 'Ceremony time must be a string',
+  }),
+  ceremony_location: Joi.string().max(200).optional().messages({
+    'string.max': 'Ceremony location cannot exceed 200 characters',
+  }),
+  reception_time: Joi.string().optional().messages({
+    'string.base': 'Reception time must be a string',
+  }),
+  reception_location: Joi.string().max(200).optional().messages({
+    'string.max': 'Reception location cannot exceed 200 characters',
+  }),
+});
+
+// Wedding update validation middleware
+export const validateWeddingUpdate = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Response | void => {
+  const { error } = weddingUpdateSchema.validate(req.body, {
+    abortEarly: false,
+    stripUnknown: true,
+  });
+
+  if (error) {
+    const errors = error.details.map((detail) => ({
+      field: detail.path.join('.'),
+      message: detail.message,
+    }));
+
+    return ResponseHandler.error(
+      res,
+      ERROR_CODES.BAD_REQUEST,
+      HTTP_STATUS.BAD_REQUEST,
+      'Validation failed',
+      errors
+    );
+  }
+
+  next();
+};
+
+// Photo upload validation middleware (separate from photo data validation)
+export const validatePhotoUpload = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Response | void => {
+  // Validate uploaded file exists
+  if (!(req as Request & { file?: Express.Multer.File }).file) {
+    return ResponseHandler.error(
+      res,
+      ERROR_CODES.BAD_REQUEST,
+      HTTP_STATUS.BAD_REQUEST,
+      'Photo file is required'
+    );
+  }
+
+  // Additional photo data validation (caption, uploader info)
+  const photoDataSchema = Joi.object({
+    weddingId: Joi.string().uuid().required().messages({
+      'string.uuid': 'Wedding ID must be a valid UUID',
+      'any.required': 'Wedding ID is required',
+    }),
+    uploader_name: Joi.string().trim().min(1).max(100).required().messages({
+      'string.empty': 'Uploader name is required',
+      'string.min': 'Uploader name must be at least 1 character',
+      'string.max': 'Uploader name cannot exceed 100 characters',
+      'any.required': 'Uploader name is required',
+    }),
+    uploader_email: Joi.string().email().max(255).optional().messages({
+      'string.email': 'Please provide a valid email address',
+      'string.max': 'Email cannot exceed 255 characters',
+    }),
+    caption: Joi.string().max(500).optional().allow('').messages({
+      'string.max': 'Caption cannot exceed 500 characters',
+    }),
+  });
+
+  const { error } = photoDataSchema.validate(req.body, {
+    abortEarly: false,
+    stripUnknown: true,
+  });
+
+  if (error) {
+    const errors = error.details.map((detail) => ({
+      field: detail.path.join('.'),
+      message: detail.message,
+    }));
+
+    return ResponseHandler.error(
+      res,
+      ERROR_CODES.BAD_REQUEST,
+      HTTP_STATUS.BAD_REQUEST,
+      'Validation failed',
+      errors
+    );
+  }
+
+  next();
+};

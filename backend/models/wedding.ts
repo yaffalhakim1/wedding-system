@@ -16,9 +16,10 @@ interface WeddingAttributes {
   reception_location?: string;
   createdAt?: Date;
   updatedAt?: Date;
+  deletedAt?: Date;
 }
 
-interface WeddingCreationAttributes extends Omit<WeddingAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
+interface WeddingCreationAttributes extends Omit<WeddingAttributes, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'> {}
 
 export default (sequelize: Sequelize, DataTypes: typeof SequelizeDataTypes) => {
   class Wedding extends Model<WeddingAttributes, WeddingCreationAttributes> implements WeddingAttributes {
@@ -35,6 +36,7 @@ export default (sequelize: Sequelize, DataTypes: typeof SequelizeDataTypes) => {
     public reception_location?: string;
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
+    public readonly deletedAt!: Date;
 
     public static associations: {
       rsvps: Association<Wedding, any>;
@@ -133,6 +135,7 @@ export default (sequelize: Sequelize, DataTypes: typeof SequelizeDataTypes) => {
       tableName: 'weddings',
       underscored: true,
       timestamps: true,
+      paranoid: true,
       indexes: [
         {
           fields: ['wedding_date'],

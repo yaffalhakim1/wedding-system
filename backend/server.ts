@@ -11,6 +11,7 @@ import weddingRoutes from './routes/wedding.js';
 import rsvpRoutes from './routes/rsvp.js';
 import adminRoutes from './routes/admin.js';
 import messageRoutes from './routes/message.js';
+import photoRoutes from './routes/photo.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -81,11 +82,11 @@ app.get('/api', (req: Request, res: Response) => {
   });
 });
 
-// Placeholder route handlers - will be replaced with actual routes
+// API route handlers
 app.use('/api/wedding', weddingRoutes);
 app.use('/api/rsvp', rsvpRoutes);
 app.use('/api/messages', messageRoutes);
-// app.use('/api/photos', photoRoutes);
+app.use('/api/photos', photoRoutes);
 app.use('/api/admin', adminRoutes);
 
 // 404 handler

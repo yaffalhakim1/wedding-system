@@ -1,0 +1,36 @@
+[package]
+name = "wedding-backend-rust"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+# Web framework
+axum = "0.8.4"
+tokio = { version = "1.0", features = ["full"] }
+tower = "0.5.2"
+tower-http = { version = "0.6.6", features = ["cors", "fs"] }
+
+# Database
+sqlx = { version = "0.8", features = ["runtime-tokio-rustls", "postgres", "chrono", "uuid"] }
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Environment & Config
+dotenv = "0.15"
+
+# Auth & Security
+jsonwebtoken = "9.0"
+bcrypt = "0.17.1"
+
+# Utilities
+chrono = { version = "0.4", features = ["serde"] }
+uuid = { version = "1.0", features = ["v4", "serde"] }
+anyhow = "1.0"
+
+# Validation
+validator = { version = "0.20.0", features = ["derive"] }
+
+# File handling
+multer = "3.0"

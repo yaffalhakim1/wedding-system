@@ -17,6 +17,7 @@ export interface PhotoAttributes {
   approved_at?: Date | null;
   createdAt?: Date;
   updatedAt?: Date;
+  deletedAt?: Date;
 }
 
 // Interface for Photo creation attributes (optional id, timestamps, and approval fields)
@@ -120,6 +121,7 @@ export default (sequelize: Sequelize, DataTypes: typeof import('sequelize').Data
       tableName: 'photos',
       underscored: true,
       timestamps: true,
+      paranoid: true,
       indexes: [
         {
           fields: ['weddingId'],

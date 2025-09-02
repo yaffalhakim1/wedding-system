@@ -5,6 +5,7 @@ export const ERROR_CODES = {
   BAD_REQUEST: 'BAD_REQUEST',
   UNAUTHORIZED: 'UNAUTHORIZED',
   FORBIDDEN: 'FORBIDDEN',
+  INVALID_CREDENTIALS: 'INVALID_CREDENTIALS',
 
   // Wedding specific
   WEDDING_NOT_FOUND: 'WEDDING_NOT_FOUND',
@@ -32,6 +33,7 @@ export const ERROR_MESSAGES: Record<ErrorCode, string> = {
   [ERROR_CODES.BAD_REQUEST]: 'Bad request',
   [ERROR_CODES.UNAUTHORIZED]: 'Unauthorized access',
   [ERROR_CODES.FORBIDDEN]: 'Access forbidden',
+  [ERROR_CODES.INVALID_CREDENTIALS]: 'Invalid username or password',
 
   [ERROR_CODES.WEDDING_NOT_FOUND]: 'Wedding information not found',
 

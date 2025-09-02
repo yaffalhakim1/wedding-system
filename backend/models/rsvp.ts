@@ -18,10 +18,11 @@ export interface RsvpAttributes {
   special_requests?: string | null;
   createdAt?: Date;
   updatedAt?: Date;
+  deletedAt?: Date;
 }
 
 // Interface for RSVP creation attributes (optional id and timestamps)
-export interface RsvpCreationAttributes extends Optional<RsvpAttributes, 'id' | 'createdAt' | 'updatedAt' | 'guest_email' | 'guest_phone' | 'dietary_restrictions' | 'special_requests'> {}
+export interface RsvpCreationAttributes extends Optional<RsvpAttributes, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'guest_email' | 'guest_phone' | 'dietary_restrictions' | 'special_requests'> {}
 
 // RSVP model class
 export class Rsvp extends Model<RsvpAttributes, RsvpCreationAttributes> implements RsvpAttributes {
@@ -38,6 +39,7 @@ export class Rsvp extends Model<RsvpAttributes, RsvpCreationAttributes> implemen
   // Timestamps
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
+  public readonly deletedAt!: Date;
 
   // Associations
   public static associations: {
@@ -117,6 +119,7 @@ export default (sequelize: Sequelize, DataTypes: typeof import('sequelize').Data
       tableName: 'rsvps',
       underscored: true,
       timestamps: true,
+      paranoid: true,
       indexes: [
         {
           fields: ['weddingId'],
